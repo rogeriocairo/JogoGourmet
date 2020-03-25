@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+
+    var perguntasSim = (List<Pergunta>)ViewData["PerguntasSim"];
+}
+
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        @foreach (var item in perguntasSim)
+        {
+            <div class="form-group" id="@item.Id">
+                <div class="row">
+                    @Html.DisplayFor(modelItem => item.Enunciado, new { @class = "col-md-4 col-form-label" })
+                </div>
+                <div class="row col-md-4">
+                    @foreach (var btn in item.TipoResposta)
+                    {
+                        <button type="submit" id="btn_@item.Id" class="btn btn-primary">@btn.ToString()</button>
+                    }
+                </div>
+
+            </div>
+        }
+    </div>
+}
