@@ -1,13 +1,13 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 
-    var perguntasSim = (List<Pergunta>)ViewData["PerguntasSim"];
+    var perguntas = (List<Pergunta>)ViewData["Perguntas"];
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index","Home", FormMethod.Post))
 {
     <div class="form-group">
-        @foreach (var item in perguntasSim)
+        @foreach (var item in perguntas)
         {
             <div class="form-group" id="@item.Id">
                 <div class="row">
@@ -16,10 +16,24 @@
                 <div class="row col-md-4">
                     @foreach (var btn in item.TipoResposta)
                     {
-                        <button type="submit" id="btn_@item.Id" class="btn btn-primary">@btn.ToString()</button>
+                        switch (btn)
+                        {
+                            case JogosGourmet.Common.Enum.RespostaType.OK:
+                                <button type="submit" id="BotaoOK" name="BotaoOK" class="btn btn-primary" value="@item.Id">OK</button>
+                                break;
+                            case JogosGourmet.Common.Enum.RespostaType.Sim:
+                                <button type="submit" id="BotaoSim" name="BotaoSim" class="btn btn-primary" value="@item.Id">Sim</button>
+                                break;
+                            case JogosGourmet.Common.Enum.RespostaType.Não:
+                                <button type="submit" id="BotaoNao" name="BotaoNao" class="btn btn-primary" value="@item.Id">Não</button>
+                                break;
+                            case JogosGourmet.Common.Enum.RespostaType.Cancelar:
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 </div>
-
             </div>
         }
     </div>

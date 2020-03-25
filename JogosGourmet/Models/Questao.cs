@@ -11,19 +11,11 @@ namespace JogosGourmet.Models
 
         }
 
-        public Questao(int pergunta, string texto
-            //List<Common.Enum.RespostaType> tipoResposta
-            //,
-            //int ordem,
-            //int? respostaPositiva = null,
-            //int? respotaNegativa = null
-            )
+        public Questao(int pergunta, string texto             )
         {
             Pergunta = pergunta;
-            Texto = texto;
-            // Resposta = resposta;
-            //Ordem = ordem;
-            //TipoResposta = tipoResposta;
+            Texto = texto;            
+            
             //RespostaPositiva = respostaPositiva;
             //RespostaNegativa = respotaNegativa;
         }
@@ -32,7 +24,11 @@ namespace JogosGourmet.Models
 
         public string Texto { get; private set; }
 
-        //public string Resposta { get; private set; }
+        public string BotaoOK { get; set; }
+
+        public string BotaoSim { get; set; }
+
+        public string BotaoNao { get; set; }
 
         public int? RespostaPositiva { get; private set; }
 

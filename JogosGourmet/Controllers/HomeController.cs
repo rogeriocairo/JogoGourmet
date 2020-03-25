@@ -10,7 +10,7 @@ namespace JogosGourmet.Controllers
     public class HomeController : Controller
     {
         private List<Questao> questoes = new List<Questao>();
-        private List<Pergunta> perguntasSim = new List<Pergunta>();
+        private List<Pergunta> perguntas = new List<Pergunta>();
         private List<Pergunta> perguntasNao = new List<Pergunta>();
         private List<Common.Enum.RespostaType> respostaTypeOk = new List<Common.Enum.RespostaType>();
         private List<Common.Enum.RespostaType> respostaTypeSimNao = new List<Common.Enum.RespostaType>();
@@ -28,7 +28,6 @@ namespace JogosGourmet.Controllers
             respostaTypeCancelar.Add(RespostaType.OK);
             respostaTypeCancelar.Add(RespostaType.Cancelar);
 
-
             //questoes.Add(new Questao(1, "Pense em um prato que você goste", "", respostaTypeOk, 1, 2));
             //questoes.Add(new Questao(2, string.Format("O prato que você pensou é {0}?", "massa"), "", respostaTypeSimNao, 2, 3, 4));
             //questoes.Add(new Questao(3, string.Format("O prato que você pensou é {0}?", "lasanha"), "", respostaTypeSimNao, 5, 6, 3));
@@ -43,44 +42,32 @@ namespace JogosGourmet.Controllers
         {
             if (ViewData["PerguntasSim"] is null)
             {
-                perguntasSim.Add(new Pergunta("Pense em um prato que você goste", respostaTypeOk));
-                ViewData["PerguntasSim"] = perguntasSim;
+                perguntas.Add(new Pergunta("Pense em um prato que você goste", respostaTypeOk));
+                ViewData["Perguntas"] = perguntas;
             }
             else
             {
-                perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), respostaTypeSimNao));
-                perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), respostaTypeSimNao));
-                perguntasNao.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), respostaTypeSimNao));
-                perguntasSim.Add(new Pergunta("Acertei de novo", respostaTypeOk));
+            //    perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), respostaTypeSimNao));
+            //    perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), respostaTypeSimNao));
+            //    perguntasNao.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), respostaTypeSimNao));
+            //    perguntasSim.Add(new Pergunta("Acertei de novo", respostaTypeOk));
 
                 if (true)
                 {
 
                 }
             }
-                return View();
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Index()
+        public IActionResult Index(Questao valor)
         {
-            if (ViewData["PerguntasSim"] is null)
+            if (true)
             {
-                perguntasSim.Add(new Pergunta("Pense em um prato que você goste", respostaTypeOk));
-                ViewData["PerguntasSim"] = perguntasSim;
-            }
-            else
-            {
-                perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), respostaTypeSimNao));
-                perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), respostaTypeSimNao));
-                perguntasNao.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), respostaTypeSimNao));
-                perguntasSim.Add(new Pergunta("Acertei de novo", respostaTypeOk));
 
-                if (true)
-                {
-
-                }
             }
+
             return View();
         }
 
@@ -96,13 +83,6 @@ namespace JogosGourmet.Controllers
                 throw;
             }
 
-            int valor1 = 10;
-            int valor2 = 15;
-
-            bool resultado = valor1 == valor2 ? true : false;
-
-            // O Resultado foi: False.
-
             return View();
         }
 
@@ -110,20 +90,6 @@ namespace JogosGourmet.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-
-        public void Teste()
-        {
-            try
-            {
-                int[] myNumbers = { 1, 2, 3 };
-                Console.WriteLine(myNumbers[10]);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
         }
     }
 }
