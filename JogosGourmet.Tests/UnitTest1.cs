@@ -26,6 +26,7 @@ namespace JogosGourmet.Tests
 
         }
 
+        [Fact]
         public void Teste()
         {
             try
@@ -37,24 +38,6 @@ namespace JogosGourmet.Tests
             {
                 Console.WriteLine(e.Message);
             }
-        }
-
-        public string TesteSwitch(int opcao)
-        {
-            var msg = "";
-
-            switch (opcao)
-            {
-                case 0:
-                    var msg1 =  "Operação realizada com sucesso."  ;
-                    break;
-                case -1:
-                    var msg2 = "Nenhum item foi encontrado para realizar a operação.";
-                    break;
-                case -2:
-                    var msg3 = "Operação cancelada  pelo  usuário.";
-                    break;                
-            }            
-        }
+        }       
     }
 }

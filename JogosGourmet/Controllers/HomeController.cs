@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using JogosGourmet.Models;
 using System.Collections.Generic;
 using static JogosGourmet.Common.Enum;
-using System.Linq;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Linq;
 
 namespace JogosGourmet.Controllers
 {
@@ -44,32 +45,71 @@ namespace JogosGourmet.Controllers
             if (ViewData["Perguntas"] is null)
             {
                 perguntas.Add(new Pergunta("Pense em um prato que você goste", respostaTypeOk, Guid.Empty));
-                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), respostaTypeSimNao, perguntas.Last().Id));
+                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), respostaTypeSimNao, perguntas.Last().Id, RespostaType.Sim));
                 perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), respostaTypeSimNao, perguntas.Last().Id, RespostaType.Sim));
                 perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), respostaTypeSimNao, perguntas.Last().Id, RespostaType.Não));
                 perguntas.Add(new Pergunta("Acertei de novo!", respostaTypeOk, perguntas.Last().Id));
 
-                ViewData["Perguntas"] = perguntas;
+                ViewData["resposta"] = perguntas.First().Id;
             }
 
             return View(perguntas);
         }
 
         [HttpPost]
-        public IActionResult Index(Pergunta valor)
+        public IActionResult Positivo(List<Pergunta> perguntas)
         {
-            var teste = ViewData["Perguntas"];
-                       
-
-            return View();
+            try
+            {
+                var numero = HttpContext.Request.Form["BotaoOK"].ToString();
+                var tipo = HttpContext.Request.Form["BotaoOK"].ToString();
+                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(numero) && x.RespostaType.Equals(RespostaType.Sim));
+                ViewData["resposta"] = resposta.Id;
+                ViewData["Perguntas"] = perguntas;
+            }
+            catch (Exception)
+            {
+                ViewBag.Result = "Wrong Input Provided.";
+            }
+            return View("CalPage");
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Post(List<Pergunta> perguntas)
         {
+            try
+            {
+                var CodigoId = Guid.Parse(HttpContext.Request.Form["BotaoOK"].ToString());
 
+                ViewData["resposta"] = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId)).Id;
+                ViewData["Perguntas"] = perguntas;
+            }
+            catch (Exception)
+            {
+                ViewBag.Result = "Wrong Input Provided.";
+            }
 
-            return View();
+            return Redirect("/Home");
         }
+
+        public IActionResult Resultado()
+        {
+            try
+            {
+                var CodigoId = Guid.Parse(HttpContext.Request.Form["BotaoOK"].ToString());
+
+                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId));
+
+                ViewData["resposta"] = resposta.Id;
+            }
+            catch (Exception)
+            {
+                ViewBag.Result = "Wrong Input Provided.";
+            }
+
+            return Redirect("/Home/");
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

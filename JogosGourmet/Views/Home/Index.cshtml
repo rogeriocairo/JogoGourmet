@@ -1,39 +1,46 @@
-﻿@{
+﻿@model List<JogosGourmet.Models.Pergunta>
+
+@{
     ViewData["Title"] = "Home Page";
 
     var perguntas = (List<Pergunta>)ViewData["Perguntas"];
 }
 
-@using (Html.BeginForm("Index","Home", FormMethod.Post))
+@using (Html.BeginForm(FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     <div class="form-group">
-        @foreach (var item in perguntas)
+
+      
+
+        @for (int i = 0; i < Model.Count; i++)
         {
-            <div class="form-group" id="@item.Id">
-                <div class="row">
-                    @Html.DisplayFor(modelItem => item.Enunciado, new { @class = "col-md-4 col-form-label" })
-                </div>
-                <div class="row col-md-4">
-                    @foreach (var btn in item.FormatacaoPergunta)
+            var formatacao = Model[i].FormatacaoPergunta;
+
+
+            <div id="row_@Html.DisplayFor(x => x[i].Id)" class="@(Model.ElementAt(i).Id == (Guid) ViewData["resposta"]?"visible-item":"d-none")">
+                @Html.HiddenFor(x => x[i].Id)
+                @Html.TextBoxFor(x => x[i].Enunciado, new { @class = "col-md-4 col-form-label" })
+                @Html.HiddenFor(x => x[i].RespostaId)
+                @Html.HiddenFor(x => x[i].RespostaType)
+
+                @for (int z = 0; z < Model[i].FormatacaoPergunta.Count; z++)
+                {
+                    switch (Model[i].FormatacaoPergunta[z])
                     {
-                        switch (btn)
-                        {
-                            case JogosGourmet.Common.Enum.RespostaType.OK:
-                                <button type="submit" id="BotaoOK" name="BotaoOK" class="btn btn-primary" value="@item.Id">OK</button>
-                                break;
-                            case JogosGourmet.Common.Enum.RespostaType.Sim:
-                                <button type="submit" id="BotaoSim" name="BotaoSim" class="btn btn-primary" value="@item.Id">Sim</button>
-                                break;
-                            case JogosGourmet.Common.Enum.RespostaType.Não:
-                                <button type="submit" id="BotaoNao" name="BotaoNao" class="btn btn-primary" value="@item.Id">Não</button>
-                                break;
-                            case JogosGourmet.Common.Enum.RespostaType.Cancelar:
-                                break;
-                            default:
-                                break;
-                        }
+                        case JogosGourmet.Common.Enum.RespostaType.OK:
+                            <button type="submit" id="BotaoOK" name="BotaoOK" class="btn btn-primary" formaction="/Home/Post" value="@Model.ElementAt(i).Id">OK</button>
+                            break;
+                        case JogosGourmet.Common.Enum.RespostaType.Sim:
+                            <button type="submit" id="BotaoSim" name="BotaoSim_@Model.ElementAt(i).Id" class="btn btn-primary" value="@Model.ElementAt(i).Id">Sim</button>
+                            break;
+                        case JogosGourmet.Common.Enum.RespostaType.Não:
+                            <button type="submit" id="BotaoNao" name="BotaoNao_@Model.ElementAt(i).Id" class="btn btn-primary" value="@Model.ElementAt(i).Id">Não</button>
+                            break;
+                        case JogosGourmet.Common.Enum.RespostaType.Cancelar:
+                            break;
                     }
-                </div>
+                }
+
             </div>
         }
     </div>
