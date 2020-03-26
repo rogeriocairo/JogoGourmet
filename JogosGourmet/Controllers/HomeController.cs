@@ -4,6 +4,7 @@ using JogosGourmet.Models;
 using System.Collections.Generic;
 using static JogosGourmet.Common.Enum;
 using System.Linq;
+using System;
 
 namespace JogosGourmet.Controllers
 {
@@ -40,48 +41,32 @@ namespace JogosGourmet.Controllers
 
         public IActionResult Index()
         {
-            if (ViewData["PerguntasSim"] is null)
+            if (ViewData["Perguntas"] is null)
             {
-                perguntas.Add(new Pergunta("Pense em um prato que você goste", respostaTypeOk));
+                perguntas.Add(new Pergunta("Pense em um prato que você goste", respostaTypeOk, Guid.Empty));
+                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), respostaTypeSimNao, perguntas.Last().Id));
+                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), respostaTypeSimNao, perguntas.Last().Id, RespostaType.Sim));
+                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), respostaTypeSimNao, perguntas.Last().Id, RespostaType.Não));
+                perguntas.Add(new Pergunta("Acertei de novo!", respostaTypeOk, perguntas.Last().Id));
+
                 ViewData["Perguntas"] = perguntas;
             }
-            else
-            {
-            //    perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), respostaTypeSimNao));
-            //    perguntasSim.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), respostaTypeSimNao));
-            //    perguntasNao.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), respostaTypeSimNao));
-            //    perguntasSim.Add(new Pergunta("Acertei de novo", respostaTypeOk));
 
-                if (true)
-                {
-
-                }
-            }
-            return View();
+            return View(perguntas);
         }
 
         [HttpPost]
-        public IActionResult Index(Questao valor)
+        public IActionResult Index(Pergunta valor)
         {
-            if (true)
-            {
-
-            }
+            var teste = ViewData["Perguntas"];
+                       
 
             return View();
         }
 
         public IActionResult Privacy()
         {
-            try
-            {
 
-            }
-            catch (System.Exception)
-            {
-
-                throw;
-            }
 
             return View();
         }

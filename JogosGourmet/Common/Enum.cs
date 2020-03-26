@@ -9,7 +9,8 @@ namespace JogosGourmet.Common
             OK = 0,
             Sim = 1,
             Não = 2,
-            Cancelar=3
+            Cancelar = 3,
+            Indefinido = 99
         };
     }
 }

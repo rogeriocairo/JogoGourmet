@@ -14,7 +14,7 @@
                     @Html.DisplayFor(modelItem => item.Enunciado, new { @class = "col-md-4 col-form-label" })
                 </div>
                 <div class="row col-md-4">
-                    @foreach (var btn in item.TipoResposta)
+                    @foreach (var btn in item.FormatacaoPergunta)
                     {
                         switch (btn)
                         {
