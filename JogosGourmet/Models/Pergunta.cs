@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using static JogosGourmet.Common.Enum;
 
 namespace JogosGourmet.Models
 {
@@ -12,19 +9,19 @@ namespace JogosGourmet.Models
 
         }
 
-        public Pergunta(string enunciado, List<RespostaType> formatacaoPergunta, Guid respostaId, RespostaType respostaType = RespostaType.Indefinido)
+        public Pergunta(string enunciado, string formatacaoPergunta, Guid respostaId, string respostaType = "Indefinido")
         {
             Enunciado = enunciado;
-            FormatacaoPergunta = formatacaoPergunta;
             RespostaType = respostaType;
             RespostaId = respostaId;
+            FormatacaoPergunta = formatacaoPergunta;
         }
 
         public string Enunciado { get; set; }
 
-        public List<RespostaType> FormatacaoPergunta { get; private set; }
+        public string FormatacaoPergunta { get; set; }
 
-        public RespostaType RespostaType { get; private set; }
+        public string RespostaType { get; set; }
 
         public Guid RespostaId { get; set; }
 
