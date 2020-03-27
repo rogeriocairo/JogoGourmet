@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JogosGourmet", "JogosGourmet\JogosGourmet.csproj", "{42457393-050A-4AFE-9817-DDE801779A22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JogosGourmet.Tests", "JogosGourmet.Tests\JogosGourmet.Tests.csproj", "{61273ED3-8DD8-4AEF-AF80-EEE2BE330AF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JogosGourmet.Tests", "JogosGourmet.Tests\JogosGourmet.Tests.csproj", "{61273ED3-8DD8-4AEF-AF80-EEE2BE330AF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

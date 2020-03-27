@@ -5,17 +5,13 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Routing;
 
 namespace JogosGourmet.Controllers
 {
     public class HomeController : Controller
     {
-        private List<Questao> questoes = new List<Questao>();
         private List<Pergunta> perguntas = new List<Pergunta>();
-        private List<Pergunta> perguntasNao = new List<Pergunta>();
-        private List<string> respostaTypeOk = new List<string>();
-        private List<string> respostaTypeSimNao = new List<string>();
-        private List<string> respostaTypeCancelar = new List<string>();
 
         public HomeController()
         {
@@ -27,8 +23,8 @@ namespace JogosGourmet.Controllers
             perguntas.Add(new Pergunta("Pense em um prato que você goste", "OK", Guid.Empty));
             perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), "SimNao", perguntas.Last().Id, "Sim"));
             perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), "SimNao", perguntas.Last().Id, "Sim"));
-            perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), "SimNao", perguntas.Last().Id, "Não"));
-            perguntas.Add(new Pergunta("Acertei de novo!", "Ok", perguntas.Last().Id));
+            perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), "SimNao", perguntas[1].Id, "Não"));
+            perguntas.Add(new Pergunta("Acertei de novo!", "Finalizar", perguntas.Last().Id));
 
             ViewData["resposta"] = perguntas.First().Id;
 
@@ -36,58 +32,69 @@ namespace JogosGourmet.Controllers
         }
 
         [HttpPost]
-        public IActionResult Positivo(List<Pergunta> perguntas)
+        public IActionResult Post(List<Pergunta> perguntas, string codigoId)
         {
-            try
-            {
-                var numero = HttpContext.Request.Form["BotaoOK"].ToString();
-                var tipo = HttpContext.Request.Form["BotaoOK"].ToString();
-                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(numero) && x.RespostaType.Equals("Sim"));
-                ViewData["resposta"] = resposta.Id;
-                ViewData["perguntas"] = perguntas;
-            }
-            catch (Exception)
-            {
-                ViewBag.Result = "Wrong Input Provided.";
-            }
-            return View("Index");
-        }
+            var botaoOK = HttpContext.Request.Form["BotaoOK"].ToString();
+            var botaoNao = HttpContext.Request.Form["BotaoNao"].ToString();
+            var botaoSim = HttpContext.Request.Form["BotaoSim"].ToString();
 
-        [HttpPost]
-        public IActionResult Post(List<Pergunta> perguntas)
-        {
-            var CodigoId = Guid.Parse(HttpContext.Request.Form["BotaoOK"].ToString());
+            if (botaoOK != "")
+            {
+                var CodigoId = Guid.Parse(botaoOK);
+                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId)).Id;
+                ViewData["resposta"] = resposta;
+            }
 
-            ViewData["resposta"] = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId)).Id;
+            if (botaoNao != "")
+            {
+                var CodigoId = Guid.Parse(botaoNao);
+                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId) && x.RespostaType == "Não");
+
+                if (resposta is null)
+                {
+                    ViewData["Perguntas"] = perguntas;
+                    ViewData["CodigoId"] = codigoId;                    
+
+                    return View("Pergunta");                    
+                }
+                else
+                {
+                    ViewData["resposta"] = resposta.Id;
+                }
+            }
+
+            if (botaoSim != "")
+            {
+                var CodigoId = Guid.Parse(botaoSim);
+                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId) && x.RespostaType == "Sim");
+
+                if (resposta is null)
+                {
+                    ViewData["resposta"] = perguntas.Last().Id;
+                }
+                else
+                {
+                    ViewData["resposta"] = resposta.Id;
+                }
+            }
+
             ViewData["Perguntas"] = perguntas;
-
 
             return View(perguntas);
         }
 
-        public IActionResult Resultado()
+        public IActionResult Pergunta()
         {
-            try
-            {
-                var CodigoId = Guid.Parse(HttpContext.Request.Form["BotaoOK"].ToString());
-
-                // var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId));
-
-                //ViewData["resposta"] = resposta.Id;
-            }
-            catch (Exception)
-            {
-                ViewBag.Result = "Wrong Input Provided.";
-            }
-
-            return Redirect("/Home/");
+            ViewData["novoPrato"] = HttpContext.Request.Form["txtNovoPrato"].ToString();
+            return View(perguntas);
         }
 
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Novo(List<Pergunta> perguntas, string codigoId)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var test = ViewData["Perguntas"];
+            var test2 = ViewData["CodigoId"];
+
+            return View(perguntas);
         }
     }
 }

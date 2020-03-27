@@ -1,0 +1,29 @@
+﻿@model List<JogosGourmet.Models.Pergunta>
+
+@{
+    ViewData["Title"] = "Home Page";
+    var codigoId = ViewData["CodigoId"].ToString();
+    var perguntas = (ViewData["Perguntas"] as List<JogosGourmet.Models.Pergunta>);
+}
+
+@using (Html.BeginForm(FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @for (int i = 0; i < perguntas.Count(); i++)
+    {
+        @Html.HiddenFor(x => Model[i].Id)
+        @Html.HiddenFor(x => Model[i].RespostaId)
+        @Html.HiddenFor(x => Model[i].FormatacaoPergunta)
+        @Html.HiddenFor(x => Model[i].RespostaType)
+        @Html.HiddenFor(x => Model[i].Enunciado)
+    }
+
+    <div class="form-group">
+        <div class="row">
+            <label>O que você pensou?</label>
+            <input type="text" name="txtNovoPrato" />
+        </div>
+        <div class="row">
+            <button type="submit" id="BotaoOK" name="BotaoOK" class="btn btn-primary" formaction="/Home/Novo?codigoId=@codigoId">OK</button>
+        </div>
+    </div>
+}

@@ -1,6 +1,6 @@
 ﻿@model List<JogosGourmet.Models.Pergunta>
 @{
-    ViewData["Title"] = "Home Page";   
+    ViewData["Title"] = "Home Page";
 }
 
 @using (Html.BeginForm(FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
@@ -10,18 +10,19 @@
         @for (int i = 0; i < Model.Count; i++)
         {
             <div id="row_@Model[i].Id" class="@(Model[i].Id == (Guid) ViewData["resposta"]?"visible-item":"d-none")">
+                <input type="hidden" id="codigoId" value="@Model[i].Id">
 
                 @Html.HiddenFor(x => Model[i].Id)
                 @Html.HiddenFor(x => Model[i].RespostaId)
                 @Html.HiddenFor(x => Model[i].FormatacaoPergunta)
                 @Html.HiddenFor(x => Model[i].RespostaType)
-                @Html.TextBoxFor(x => Model[i].Enunciado)
+                @Html.TextBoxFor(x => Model[i].Enunciado, new { @class = "text-md-center", @readonly = "readonly" })
 
                 <div class="row">
                     @switch (Model[i].FormatacaoPergunta)
                     {
                         case "OK":
-                            <button type="submit" id="BotaoOK" name="BotaoOK" class="btn btn-primary" formaction="/Home/Post" value="@Model[i].Id">OK</button>
+                            <button type="submit" id="BotaoOK" name="BotaoOK" class="btn btn-primary" formaction="/Home/Post?codigoId=@Model[i].Id + @Model[i].FormatacaoPergunta" value="@Model[i].Id">OK</button>
                             break;
                         case "SimNao":
                             <button type="submit" id="BotaoSim" name="BotaoSim_@Model[i].Id" class="btn btn-primary" value="@Model[i].Id">Sim</button>
