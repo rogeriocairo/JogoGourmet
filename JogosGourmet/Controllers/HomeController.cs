@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using JogosGourmet.Models;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json;
 
 namespace JogosGourmet.Controllers
 {
@@ -20,16 +19,28 @@ namespace JogosGourmet.Controllers
 
         public IActionResult Index()
         {
-            perguntas.Add(new Pergunta("Pense em um prato que você goste", "OK", Guid.Empty));
-            perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), "SimNao", perguntas.Last().Id, "Sim"));
-            perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), "SimNao", perguntas.Last().Id, "Sim"));
-            perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), "SimNao", perguntas[1].Id, "Não"));
-            perguntas.Add(new Pergunta("Acertei de novo!", "Finalizar", perguntas.Last().Id));
+            if (TempData["data"] == null)
+            {
+                perguntas.Add(new Pergunta("Pense em um prato que você goste", "OK", Guid.Empty));
+                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "massa"), "SimNao", perguntas.Last().Id, "Sim"));
+                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "lasanha"), "SimNao", perguntas.Last().Id, "Sim"));
+                perguntas.Add(new Pergunta(string.Format("O prato que você pensou é {0}?", "bolo de chocolate"), "SimNao", perguntas[1].Id, "Não"));
+                perguntas.Add(new Pergunta("Acertei de novo!", "Finalizar", perguntas.Last().Id));
+            }
+            else
+            {
+                List<Pergunta> deserializedlistobj = (List<Pergunta>)JsonConvert.DeserializeObject(TempData["data"].ToString(), typeof(List<Pergunta>));
+
+                foreach (var item in deserializedlistobj)
+                {
+                    perguntas.Add(new Pergunta(item.Enunciado, item.FormatacaoPergunta, item.RespostaId, item.RespostaType));
+                }
+            }
 
             ViewData["resposta"] = perguntas.First().Id;
-
             return View(perguntas);
         }
+
 
         [HttpPost]
         public IActionResult Post(List<Pergunta> perguntas, string codigoId)
@@ -39,13 +50,11 @@ namespace JogosGourmet.Controllers
             var botaoSim = HttpContext.Request.Form["BotaoSim"].ToString();
 
             if (botaoOK != "")
-            {
-                var CodigoId = Guid.Parse(botaoOK);
-                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId)).Id;
+            {                
+                var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(Guid.Parse(codigoId))).Id;
                 ViewData["resposta"] = resposta;
             }
-
-            if (botaoNao != "")
+            else if (botaoNao != "")
             {
                 var CodigoId = Guid.Parse(botaoNao);
                 var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId) && x.RespostaType == "Não");
@@ -53,17 +62,16 @@ namespace JogosGourmet.Controllers
                 if (resposta is null)
                 {
                     ViewData["Perguntas"] = perguntas;
-                    ViewData["CodigoId"] = codigoId;                    
+                    ViewData["CodigoId"] = codigoId;
 
-                    return View("Pergunta");                    
+                    return View("Pergunta");
                 }
                 else
                 {
                     ViewData["resposta"] = resposta.Id;
                 }
             }
-
-            if (botaoSim != "")
+            else if (botaoSim != "")
             {
                 var CodigoId = Guid.Parse(botaoSim);
                 var resposta = perguntas.FirstOrDefault(x => x.RespostaId.Equals(CodigoId) && x.RespostaType == "Sim");
@@ -91,10 +99,40 @@ namespace JogosGourmet.Controllers
 
         public IActionResult Novo(List<Pergunta> perguntas, string codigoId)
         {
-            var test = ViewData["Perguntas"];
-            var test2 = ViewData["CodigoId"];
+            ViewData["pratoNovo"] = HttpContext.Request.Form["txtNovoPrato"].ToString();
+
+            ViewData["codigoId"] = codigoId;
+
+            var prato = perguntas.FirstOrDefault(x => x.Id.Equals(Guid.Parse(codigoId))).Enunciado;
+
+            ViewData["pratoAnterior"] = prato.Substring(26, prato.Length - 26);
 
             return View(perguntas);
+        }
+
+        public IActionResult Final(List<Pergunta> perguntas, string codigoId)
+        {
+            var perguntaFinal = HttpContext.Request.Form["txtFinal"].ToString();
+
+            var perguntaAnterior = perguntas.FirstOrDefault(x => x.Id.Equals(Guid.Parse(codigoId)));
+
+            var pergunta = perguntas.FirstOrDefault(x => x.Id.Equals(perguntaAnterior.RespostaId));
+
+            var contador = perguntas.Count();
+
+            for (int i = 0; i < contador; i++)
+            {
+                if (perguntas[i].Id == pergunta.Id)
+                {
+                    i++;
+                    perguntas.Insert(i, new Pergunta(string.Format("O prato que você pensou é {0}?", perguntaFinal), "SimNao", pergunta.Id, "Sim"));
+
+                }
+            }
+
+            TempData["data"] = JsonConvert.SerializeObject(perguntas);
+
+            return RedirectToAction("Index");
         }
     }
 }
