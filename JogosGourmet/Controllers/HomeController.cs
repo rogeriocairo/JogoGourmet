@@ -33,7 +33,7 @@ namespace JogosGourmet.Controllers
 
                 foreach (var item in deserializedlistobj)
                 {
-                    perguntas.Add(new Pergunta(item.Enunciado, item.FormatacaoPergunta, item.RespostaId, item.RespostaType));
+                    perguntas.Add(new Pergunta(item.Id,  item.Enunciado, item.FormatacaoPergunta, item.RespostaId, item.RespostaType));
                 }
             }
 
